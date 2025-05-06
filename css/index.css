@@ -143,3 +143,53 @@ header {
     position: sticky;
     top: 0;
 }
+
+/* tablet styles */
+@media (min-width: 768px) {
+    /* h1 changes */
+    h1 {
+        font-size: 3.5rem;
+        color: #1a1a1a;
+    }
+
+    /* ul changes */
+    ul {
+        padding-left: 1.5rem;
+        background-color: #f9f9f9;
+    }
+
+    /* photo changes */
+    #Photo img {
+        max-width: 400px;
+    }
+}
+
+/* desktop styles */
+@media (min-width: 1024px) {
+    /* h1 changes */
+    h1 {
+        font-size: 4rem;
+        font-style: italic;
+    }
+
+    /* ul changes */
+    ul {
+        margin: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    /* photo changes */
+    #Photo img {
+        width: 50%;
+        border-radius: 0;
+    }
+}
+
+/* switch connect section to grid */
+@media (min-width: 768px) {
+    #Connect ul {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+}
