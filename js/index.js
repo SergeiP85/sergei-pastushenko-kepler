@@ -83,3 +83,29 @@ const messageList = messageSection.querySelector("ul");
 if (messageList.children.length === 0) {
   messageSection.style.display = "none";
 }
+
+// Fetch GitHub repositories
+fetch("https://api.github.com/users/SergeiP85/repos")
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(data) {
+    const repositories = data;
+    console.log(repositories);
+
+    // Select the Projects section
+    const projectSection = document.getElementById("Projects");
+
+    // Select the <ul> inside the Projects section
+    const projectList = projectSection.querySelector("ul");
+
+    // Iterate over the repositories array
+    for (let i = 0; i < repositories.length; i++) {
+      const project = document.createElement("li");
+      project.innerText = repositories[i].name;
+      projectList.appendChild(project);
+    }
+  })
+  .catch(function(error) {
+    console.error("Error fetching repositories:", error);
+  });
