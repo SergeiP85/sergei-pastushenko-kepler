@@ -84,27 +84,65 @@ if (messageList.children.length === 0) {
   messageSection.style.display = "none";
 }
 
-// Fetch GitHub repositories with response check
-fetch("https://api.github.com/users/SergeiP85/repos")
-  .then(function(response) {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(function(data) {
-    const repositories = data;
-    console.log(repositories);
+// Utility: Load projects from GitHub API
+function loadProjects(url) {
+  const projectList = document.querySelector("#Projects ul");
+  projectList.innerHTML = ""; // очистить предыдущий вывод
 
-    const projectSection = document.getElementById("Projects");
-    const projectList = projectSection.querySelector("ul");
+  fetch(url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(repositories => {
+      if (repositories.length === 0) {
+        const emptyItem = document.createElement("li");
+        emptyItem.innerText = "No repositories found.";
+        projectList.appendChild(emptyItem);
+        return;
+      }
 
-    for (let i = 0; i < repositories.length; i++) {
-      const project = document.createElement("li");
-      project.innerText = repositories[i].name;
-      projectList.appendChild(project);
-    }
-  })
-  .catch(function(error) {
-    console.error("Error fetching repositories:", error);
+      for (let repo of repositories) {
+        const item = document.createElement("li");
+        item.innerHTML = `
+          <strong><a href="${repo.html_url}" target="_blank">${repo.name}</a></strong><br>
+          ${repo.description ? `<em>${repo.description}</em><br>` : ""}
+          ⭐ Stars: ${repo.stargazers_count ?? 0} &nbsp;&nbsp; 🛠️ Language: ${repo.language || "N/A"}
+        `;
+        projectList.appendChild(item);
+      }
+    })
+    .catch(error => {
+      const errorItem = document.createElement("li");
+      errorItem.innerText = "Error loading data: " + error.message;
+      projectList.appendChild(errorItem);
+    });
+}
+
+//  Repositories - Starred
+const showRepos = document.getElementById("show-repos");
+const showStarred = document.getElementById("show-starred");
+
+showRepos.addEventListener("click", function (e) {
+  e.preventDefault();
+  setActiveNav(this);
+  loadProjects("https://api.github.com/users/SergeiP85/repos");
+});
+
+showStarred.addEventListener("click", function (e) {
+  e.preventDefault();
+  setActiveNav(this);
+  loadProjects("https://api.github.com/users/SergeiP85/starred");
+});
+
+function setActiveNav(activeLink) {
+  document.querySelectorAll("#project-nav a").forEach(link => {
+    link.classList.remove("active");
   });
+  activeLink.classList.add("active");
+}
+
+// Default load on page
+loadProjects("https://api.github.com/users/SergeiP85/repos");
